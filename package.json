@@ -1,11 +1,8 @@
 {
-  "name": "trevo-backend",
+  "name": "fonseca-backend",
   "version": "1.0.0",
-  "description": "Backend para Cadastro de Serviços",
   "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  },
+  "scripts": { "start": "node server.js" },
   "dependencies": {
     "express": "^4.17.1",
     "pg": "^8.7.3",

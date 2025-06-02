@@ -1,3 +1,4 @@
+```javascript
 const express = require('express');
 const { Pool } = require('pg');
 const cors = require('cors');
@@ -5,23 +6,31 @@ const cors = require('cors');
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Configuração do CORS para permitir requisições do frontend
-app.use(cors());
+// Configuração do CORS
+app.use(cors({
+  origin: ['https://lucasteixeiratst.github.io', 'http://localhost:3000'], // Frontend no GitHub Pages
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type']
+}));
 app.use(express.json());
 
-// Configuração da conexão com o PostgreSQL
+// Conexão com o PostgreSQL
 const pool = new Pool({
   connectionString: 'postgresql://root:32676007@dpg-d0trh4u3jp1c73eu5atg-a.oregon-postgres.render.com/dbtrevo',
-  ssl: { rejectUnauthorized: false } // Necessário para conexões externas no Render
+  ssl: { rejectUnauthorized: false }
 });
 
-// Middleware para tratamento de erros
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ error: 'Erro interno do servidor' });
+// Teste de conexão
+app.get('/test-db', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT NOW()');
+    res.json({ success: true, time: result.rows[0].now });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// Endpoint para listar todos os serviços
+// Listar serviços
 app.get('/servicos', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM servicos ORDER BY id');
@@ -31,21 +40,21 @@ app.get('/servicos', async (req, res) => {
   }
 });
 
-// Endpoint para criar um novo serviço
+// Criar serviço
 app.post('/servicos', async (req, res) => {
   const {
-    endereco, numero, bairro, tronco, chave, qtd, alimentador, obs,
+    id, endereco, numero, bairro, tronco, chave, qtd, alimentador, obs,
     data, equipe, matricula, ea, servicos, latitude, longitude
   } = req.body;
   try {
     const result = await pool.query(
       `INSERT INTO servicos (
-        endereco, numero, bairro, tronco, chave, qtd, alimentador, obs,
+        id, endereco, numero, bairro, tronco, chave, qtd, alimentador, obs,
         data, equipe, matricula, ea, servicos, latitude, longitude
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
       RETURNING *`,
       [
-        endereco, numero, bairro, tronco, chave, qtd, alimentador, obs,
+        id, endereco, numero, bairro, tronco, chave, qtd, alimentador, obs,
         data, equipe, matricula, ea, servicos.join(', '), latitude, longitude
       ]
     );
@@ -55,7 +64,7 @@ app.post('/servicos', async (req, res) => {
   }
 });
 
-// Endpoint para atualizar um serviço
+// Atualizar serviço
 app.put('/servicos/:id', async (req, res) => {
   const { id } = req.params;
   const {
@@ -83,7 +92,7 @@ app.put('/servicos/:id', async (req, res) => {
   }
 });
 
-// Endpoint para excluir um serviço
+// Excluir serviço
 app.delete('/servicos/:id', async (req, res) => {
   const { id } = req.params;
   try {
@@ -97,7 +106,7 @@ app.delete('/servicos/:id', async (req, res) => {
   }
 });
 
-// Iniciar o servidor
 app.listen(port, () => {
   console.log(`Servidor rodando na porta ${port}`);
 });
+```

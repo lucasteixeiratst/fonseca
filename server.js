@@ -13,9 +13,9 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Conexão com o PostgreSQL (usando a nova senha do Render)
+// Conexão com o PostgreSQL (usuário root e senha 32676007)
 const pool = new Pool({
-  connectionString: 'postgresql://postgres:ujcjzTpgWtuxV8nz7dc712uEkfqnT3YH@dpg-d0trh4u3jp1c73eu5atg-a.oregon-postgres.render.com/dbtrevo',
+  connectionString: 'postgresql://root:32676007@dpg-d0trh4u3jp1c73eu5atg-a.oregon-postgres.render.com/dbtrevo',
   ssl: { rejectUnauthorized: false }
 });
 
